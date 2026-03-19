@@ -2,33 +2,32 @@ version: '3.9'
 
 services:
 
-  backend:
-    build: ./backend
-    container_name: fastapi_app
-    depends_on:
-      - db
-    ports:
-      - "8000:8000"
-    environment:
-      DB_HOST: db
-      POSTGRES_DB: devopsdb
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-    networks:
-      - devops_net
+backend:
+build: ./backend
+container_name: fastapi_app
+depends_on:
+- db
+ports:
+- "8000:8000"
+environment:
+DB_HOST: db
+POSTGRES_DB: devopsdb
+POSTGRES_USER: postgres
+POSTGRES_PASSWORD: postgres
+networks:
+- devops_net
 
-  db:
-    build: ./database
-    container_name: postgres_db
-    volumes:
-      - pgdata:/var/lib/postgresql/data
-    networks:
-      - devops_net
+db:
+build: ./database
+container_name: postgres_db
+volumes:
+- pgdata:/var/lib/postgresql/data
+networks:
+- devops_net
 
 volumes:
-  pgdata:
+pgdata:
 
 networks:
-  devops_net:
-    external: true
-      
+devops_net:
+external: true
