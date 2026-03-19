@@ -175,7 +175,7 @@ Database: 172.22.208.10
 
 ---
 
-## 🔗 API Testing
+##  API Testing
 
 ###  Health Check
 
@@ -258,26 +258,26 @@ docker-webapp_pgdata
 
 ##  Build Optimization Techniques
 
-### 🔹 Multi-Stage Builds
+###  Multi-Stage Builds
 
 * Reduces final image size
 * Separates build and runtime layers
 
-### 🔹 Slim Base Images
+###  Slim Base Images
 
 * `python:3.11-slim`
 * Smaller attack surface
 * Faster startup time
 
-### 🔹 .dockerignore
+###  .dockerignore
 
 * Excludes unnecessary files (logs, cache)
 
-### 🔹 Non-root User
+###  Non-root User
 
 * Improves container security
 
-### 🔹 Layer Caching
+### Layer Caching
 
 * Faster rebuilds when dependencies unchanged
 
