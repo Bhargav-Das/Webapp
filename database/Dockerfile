@@ -1,0 +1,5 @@
+FROM postgres:15
+
+ENV POSTGRES_DB=devopsdb
+ENV POSTGRES_USER=postgres
+ENV POSTGRES_PASSWORD=postgres
