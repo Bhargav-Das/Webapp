@@ -1,23 +1,27 @@
-# Containerized Web Application with PostgreSQL using Docker Compose & IPvlan
+# DOCKER-WEBAPP
 
-**Project Assignment 1 — Containerization and DevOps**
+Containerized Web Application with PostgreSQL using Docker Compose and IPvlan
 
----
-
-##  Overview
-
-This project demonstrates a **containerized web application** built using:
-
-*  **FastAPI** (Backend API)
-*  **PostgreSQL** (Database)
-*  **Docker & Docker Compose** (Container orchestration)
-*  **IPvlan Networking** (Static IP-based communication)
-
-Each service runs in an isolated container while communicating through a custom IPvlan network.
+Project Assignment 1 — Containerization and DevOps
 
 ---
 
-##  Architecture
+## Project Description
+
+This project demonstrates the deployment of a containerized web application using modern DevOps practices.
+
+The application consists of:
+
+* FastAPI Backend for handling API requests
+* PostgreSQL Database for persistent data storage
+* Docker and Docker Compose for container orchestration
+* IPvlan Networking for static IP-based communication
+
+Each service runs in an isolated container and communicates through a custom-defined IPvlan network.
+
+---
+
+## Project Architecture
 
 ```
 Client (Browser/Postman)
@@ -27,7 +31,7 @@ Client (Browser/Postman)
 Backend Container (FastAPI)
 IP: 172.22.208.11
         │
-        │ SQL Queries
+        │ SQL Query
         ▼
 PostgreSQL Container
 IP: 172.22.208.10
@@ -38,16 +42,16 @@ Docker Volume (pgdata)
 
 ---
 
-##  Prerequisites
+## Prerequisites
 
-Ensure the following are installed:
+Ensure Docker and Docker Compose are installed:
 
 ```bash
 docker --version
 docker compose version
 ```
 
-###  Output
+### Output
 
 ```
 bhargav@DESKTOP-QK0KB4I:/mnt/c/Users/...$ docker --version
@@ -59,9 +63,7 @@ Docker Compose version v5.0.2
 
 ---
 
-##  Project Setup
-
-### Step 1 — Create Project Directory
+## Step 1 — Create Project Directory
 
 ```bash
 mkdir docker-webapp
@@ -70,7 +72,7 @@ cd docker-webapp
 
 ---
 
-### Step 2 — Create Required Directories
+## Step 2 — Create Required Directories
 
 ```bash
 mkdir backend
@@ -86,30 +88,47 @@ backend  database
 
 ---
 
-##  Backend Structure
+## Step 3 — Backend Structure
 
 ```
 backend/
 │
-├── app.py                # FastAPI application
-├── requirements.txt     # Python dependencies
-├── Dockerfile          # Backend container build file
+├── app.py              # FastAPI application entry point
+├── requirements.txt   # Python dependencies
+├── Dockerfile        # Backend container build file
+```
+
+### Output
+
+```
+bhargav@DESKTOP-QK0KB4I:/mnt/c/.../backend$ ls
+app.py
+requirements.txt
+Dockerfile
 ```
 
 ---
 
-##  Database Structure
+## Step 4 — Database Structure
 
 ```
 database/
 │
-├── Dockerfile          # PostgreSQL container setup
-└── init.sql            # Initial schema & table creation
+├── Dockerfile        # PostgreSQL setup
+└── init.sql          # Schema initialization script
+```
+
+### Output
+
+```
+bhargav@DESKTOP-QK0KB4I:/mnt/c/.../database$ ls
+Dockerfile
+init.sql
 ```
 
 ---
 
-##  Step 3 — Create IPvlan Network
+## Step 5 — Create IPvlan Network
 
 ```bash
 docker network create -d ipvlan \
@@ -118,66 +137,97 @@ docker network create -d ipvlan \
 -o parent=eth0 mynetwork
 ```
 
-###  Explanation
+### Explanation
 
-* `ipvlan` → Lightweight network driver
-* `subnet` → Defines IP range for containers
-* `gateway` → Network gateway
-* `parent=eth0` → Host network interface
+* ipvlan: Lightweight network driver
+* subnet: Defines container IP range
+* gateway: Network gateway
+* parent=eth0: Host network interface
 
 ---
 
-##  Step 4 — Verify Network
+## Step 6 — Verify Network
 
 ```bash
 docker network ls
-docker network inspect mynetwork
+```
+
+### Output
+
+```
+NETWORK ID     NAME        DRIVER    SCOPE
+xxxxxx         mynetwork   ipvlan    local
 ```
 
 ---
 
-##  Step 5 — Build & Run Containers
+## Step 7 — Inspect Network
+
+```bash
+docker network inspect mynetwork
+```
+
+### Output
+
+```
+{
+  "Driver": "ipvlan",
+  "Subnet": "172.22.208.0/24",
+  "Gateway": "172.22.208.1"
+}
+```
+
+---
+
+## Step 8 — Build and Start Containers
 
 ```bash
 docker compose up --build
 ```
 
-### What Happens Internally:
+### Internal Workflow
 
-* Backend image is built using Python slim image
-* PostgreSQL container initializes database
-* Containers are attached to IPvlan network
-* Static IPs are assigned
+* Backend image is built using a multi-stage Dockerfile
+* PostgreSQL container initializes database schema
+* Containers connect to the IPvlan network
+* Static IP addresses are assigned
 
 ---
 
-##  Step 6 — Verify Containers
+## Step 9 — Verify Running Containers
 
 ```bash
 docker ps
 ```
 
+### Output
+
+```
+backend_api   Up
+postgres_db   Up
+```
+
 ---
 
-##  Step 7 — Check Container IPs
+## Step 10 — Verify Container IP Addresses
 
 ```bash
 docker inspect backend_api | grep IPAddress
 docker inspect postgres_db | grep IPAddress
 ```
 
-### Expected Output
+### Output
 
 ```
-Backend: 172.22.208.11
-Database: 172.22.208.10
+Backend → 172.22.208.11
+Database → 172.22.208.10
 ```
 
 ---
 
-##  API Testing
+## Step 11 — API Testing
 
-###  Health Check
+### Health Check
 
 ```
 GET http://172.22.208.11:8000/health
@@ -193,7 +243,7 @@ Response:
 
 ---
 
-###  Insert Data
+## Step 12 — Insert Record
 
 ```
 POST /items?name=test
@@ -210,7 +260,7 @@ Response:
 
 ---
 
-###  Fetch Data
+## Step 13 — Fetch Records
 
 ```
 GET /items
@@ -229,26 +279,30 @@ Response:
 
 ---
 
-##  Volume Persistence
-
-### Steps:
+## Step 14 — Volume Persistence Test
 
 ```bash
 docker compose down
 docker compose up
 ```
 
-✔ Data remains intact due to Docker volume.
+### Output
+
+```
+Data persists successfully
+```
+
+Data remains intact due to Docker volume.
 
 ---
 
-##  Volume Verification
+## Step 15 — Volume Verification
 
 ```bash
 docker volume ls
 ```
 
-Output:
+### Output
 
 ```
 docker-webapp_pgdata
@@ -256,75 +310,66 @@ docker-webapp_pgdata
 
 ---
 
-##  Build Optimization Techniques
+## Build Optimization Techniques
 
-###  Multi-Stage Builds
-
-* Reduces final image size
-* Separates build and runtime layers
-
-###  Slim Base Images
-
-* `python:3.11-slim`
-* Smaller attack surface
-* Faster startup time
-
-###  .dockerignore
-
-* Excludes unnecessary files (logs, cache)
-
-###  Non-root User
-
-* Improves container security
-
-### Layer Caching
-
-* Faster rebuilds when dependencies unchanged
+* Multi-stage builds reduce final image size
+* Slim base images reduce unnecessary dependencies
+* .dockerignore avoids copying unnecessary files
+* Layer caching improves rebuild speed
+* Non-root execution improves container security
 
 ---
 
-##  Image Size Comparison
+## Image Size Comparison
 
-| Image            | Size   |
-| ---------------- | ------ |
-| python:3.11      | ~1GB   |
-| python:3.11-slim | ~150MB |
-
----
-
-##  Macvlan vs IPvlan
-
-| Feature     | Macvlan              | IPvlan             |
-| ----------- | -------------------- | ------------------ |
-| MAC Address | Unique per container | Shared             |
-| Performance | Medium               | High               |
-| Scalability | Limited              | High               |
-| Use Case    | Small LAN            | Cloud / Production |
+| Image            | Approx Size |
+| ---------------- | ----------- |
+| python:3.11      | ~1GB        |
+| python:3.11-slim | ~150MB      |
 
 ---
 
-##  Key Learning Outcomes
+## IPvlan Networking Details
 
-* Docker containerization fundamentals
-* Microservices communication using networking
-* IPvlan configuration with static IPs
-* Persistent storage with volumes
+* Containers share the host MAC address
+* Static IP addresses are manually assigned
+* No automatic DNS resolution like bridge networks
+* Suitable for advanced networking and production environments
+
+### Communication Flow
+
+```
+Backend → 172.22.208.10 → PostgreSQL
+```
+
+---
+
+## Macvlan vs IPvlan
+
+| Feature      | Macvlan              | IPvlan |
+| ------------ | -------------------- | ------ |
+| MAC Address  | Unique per container | Shared |
+| Performance  | Medium               | High   |
+| Scalability  | Limited              | High   |
+| Network Load | Higher               | Lower  |
+
+---
+
+## Key Learning Outcomes
+
+* Containerization using Docker
+* Service orchestration using Docker Compose
+* Advanced networking using IPvlan
+* Persistent storage using Docker volumes
 * API development using FastAPI
 * DevOps best practices
 
 ---
 
-##  Conclusion
+## Conclusion
 
-This project successfully demonstrates:
+This project demonstrates a complete containerized application deployment using Docker and IPvlan networking.
 
-* Fully containerized microservice architecture
-* Efficient networking using IPvlan
-* Scalable and portable deployment
-* Persistent and reliable database storage
-
-This setup is production-oriented and follows modern DevOps practices.
+It ensures scalability, portability, and reliable data persistence while following modern DevOps practices.
 
 ---
-
-
